@@ -27,7 +27,7 @@ const App = () => {
   // This state is the source of truth for the data inside the app. You won't be needing dummyData anymore.
   // To make the search bar work (which is stretch) we'd need another state to hold the search term.
 
-  const likePost = (postId) => {
+  const likePost = (postId, from) => {
     /*
       This function serves the purpose of increasing the number of likes by one, of the post with a given id.
 
@@ -55,13 +55,37 @@ const App = () => {
     // Add the edited object to all the posts
     getPosts[indexOfClickedPost] = getClickedPost[0];
 
+    console.log(from);
+
     // Change the classes to liked
-    gsap.to(`#post-${postId} svg.no-like`, { rotation: 180, scale: 0, display: "none", duration: 0.5 });
+    gsap.to(`#post-${postId} svg.no-like`, { rotation: 180, scale: 0, display: "none", duration: 0.2 });
     gsap.to(`#post-${postId} svg.liked`, {
-      scale: 1.1,
+      scale: 1.2,
       duration: 0.5,
-      delay: 0.5,
+      delay: 0.3,
     });
+    gsap.to(`#post-${postId} svg.liked`, {
+      scale: 1,
+      duration: 0.5,
+      delay: 0.8,
+    });
+
+    if (from === "image") {
+      gsap.to(`#post-${postId} svg.post-like`, {
+        scale: 1.4,
+        duration: 0.3,
+      });
+      gsap.to(`#post-${postId} svg.post-like`, {
+        scale: 1,
+        duration: 0.3,
+        delay: 0.3,
+      });
+      gsap.to(`#post-${postId} svg.post-like`, {
+        scale: 0,
+        duration: 0.3,
+        delay: 1.5,
+      });
+    }
 
     // Set the new array into the state
     setPosts(getPosts);
