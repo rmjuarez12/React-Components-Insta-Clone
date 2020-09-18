@@ -71,13 +71,13 @@ const App = () => {
       });
       gsap.to(`#post-${postId} svg.post-like`, {
         scale: 1,
-        duration: 0.3,
+        duration: 0.1,
         delay: 0.3,
       });
       gsap.to(`#post-${postId} svg.post-like`, {
         scale: 0,
         duration: 0.3,
-        delay: 1.5,
+        delay: 1,
       });
     }
 
@@ -185,10 +185,59 @@ const App = () => {
     gsap.to(`#post-${postId} .comment-form`, { height: 0, scale: 0, duration: 0.2 });
   }
 
+  function searchPosts(e, queryStr) {
+    // Prevent form of reloading page
+    e.preventDefault();
+
+    // If the no results message is there, remove it
+    gsap.to(`.no-results`, { opacity: 0, display: "none", duration: 0 });
+
+    // Convert the queried string as array
+    const queryArr = queryStr.split(" ");
+
+    // Get all posts into a variable to not mutate original
+    const getPosts = dummyData.slice();
+
+    // helper
+    let newArr = [];
+
+    // Query the posts that match
+    const getQueriedPosts = queryArr.map((str) => {
+      getPosts.forEach((post) => {
+        if (JSON.stringify(post.comments[0]).toLowerCase().indexOf(str.toLowerCase()) !== -1) {
+          newArr.push(post);
+        }
+      });
+
+      return newArr;
+    });
+
+    // Sort the getQueriedPosts by date
+    const sortedArr = getQueriedPosts[0].slice();
+    sortedArr.sort((a, b) => a.id - b.id);
+
+    // Get loading element
+    gsap.to(`.loading`, { opacity: 1, display: "block", duration: 0.3 });
+
+    // Unload the data first
+    setPosts([]);
+
+    // Load the data
+    setTimeout(() => {
+      setPosts(sortedArr);
+      gsap.to(`.loading`, { opacity: 0, display: "none", duration: 0 });
+
+      // If there are no results, display no results
+      if (sortedArr.length < 1) {
+        gsap.to(`.no-results`, { opacity: 1, display: "block", duration: 0.3 });
+      }
+    }, 1000);
+  }
+
   return (
     <div className="App">
       {/* Add SearchBar and Posts here to render them */}
-      <SearchBar />
+      <SearchBar searchPosts={searchPosts} />
       <Posts posts={posts} likePost={likePost} removeLike={removeLikePost} postComment={postComment} />
       {/* Check the implementation of each component, to see what props they require, if any! */}
     </div>

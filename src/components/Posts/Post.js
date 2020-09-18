@@ -12,7 +12,7 @@ const Post = (props) => {
   const { post, likePost, removeLike, postComment } = props;
 
   return (
-    <div id={`post-${post.id}`} className="post-border">
+    <div id={`post-${post.id}`} className="post-border animate__animated animate__fadeInUp">
       <PostHeader username={post.username} thumbnailUrl={post.thumbnailUrl} />
       <div className="post-image-wrapper" onClick={() => likePost(post.id, "image")}>
         <img alt="post thumbnail" className="post-image" src={post.imageUrl} />

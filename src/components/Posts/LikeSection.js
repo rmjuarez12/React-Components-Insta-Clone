@@ -27,6 +27,11 @@ const LikeSection = (props) => {
 
     if (formContainer.classList.contains("active")) {
       gsap.to(`#post-${postId} .comment-form`, { height: "auto", scale: 1, duration: 0.2 });
+
+      // Focus on field after opening
+      const formField = document.querySelector(`#post-${postId} .comment-form input`);
+
+      formField.focus();
     } else {
       gsap.to(`#post-${postId} .comment-form`, { height: 0, scale: 0, duration: 0.2 });
     }

@@ -43,9 +43,9 @@ The completion of these questions is mandatory for MVP. However, passing the qui
 
 ### Task 3: Stretch Goals
 
-- [ ] Create more dummy data in the dummy-data.js file and add search functionality to the search bar. One way to do this is with a filter method.
+- [x] Create more dummy data in the dummy-data.js file and add search functionality to the search bar. One way to do this is with a filter method.
 - [x] Implement the ability to add comments to a post using an input.
-- [ ] Finish styling all of the application and get your instagram clone to closely resemble the given design spec.
+- [x] Finish styling all of the application and get your instagram clone to closely resemble the given design spec.
 
 ## Submission Format
 
