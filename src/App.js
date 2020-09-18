@@ -17,6 +17,9 @@ import dummyData from "./dummy-data";
 // Import CSS
 import "./App.css";
 
+// Import extra dependencies
+import { gsap } from "gsap";
+
 const App = () => {
   // Create a state called `posts` to hold the array of post objects, **initializing to dummyData**.
   const [posts, setPosts] = useState(dummyData);
@@ -36,13 +39,39 @@ const App = () => {
         - if the `id` of the post matches `postId`, return a new post object with the desired values (use the spread operator).
         - otherwise just return the post object unchanged.
      */
+
+    // Get all posts into a variable to not mutate original
+    const getPosts = posts.slice();
+
+    // Get the object of the clicked object
+    const getClickedPost = getPosts.filter((post) => post.id === postId);
+
+    // Get the index in the array of the clicked object
+    const indexOfClickedPost = getPosts.map((post) => post.id).indexOf(postId);
+
+    // Add a like to the post
+    getClickedPost[0].likes = getClickedPost[0].likes + 1;
+
+    // Add the edited object to all the posts
+    getPosts[indexOfClickedPost] = getClickedPost[0];
+
+    // Change the classes to liked
+    gsap.to(`#post-${postId} svg.no-like`, { rotation: 180, scale: 0, display: "none", duration: 0.5 });
+    gsap.to(`#post-${postId} svg.liked`, {
+      scale: 1.1,
+      duration: 0.5,
+      delay: 0.5,
+    });
+
+    // Set the new array into the state
+    setPosts(getPosts);
   };
 
   return (
     <div className="App">
       {/* Add SearchBar and Posts here to render them */}
       <SearchBar />
-      <Posts posts={posts} />
+      <Posts posts={posts} likePost={likePost} />
       {/* Check the implementation of each component, to see what props they require, if any! */}
     </div>
   );
