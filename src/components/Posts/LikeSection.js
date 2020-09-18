@@ -9,14 +9,14 @@ import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 
 const LikeSection = (props) => {
   // 🔥 Make sure the parent of LikeSection is passing the right props!
-  const { likePost, numberOfLikes } = props;
+  const { likePost, numberOfLikes, removeLike } = props;
 
   return (
     <div>
       <div className="like-section" key="likes-icons-container">
         <div className="like-section-wrapper">
           <FontAwesomeIcon icon={faHeart} onClick={likePost} className="no-like" />
-          <FontAwesomeIcon icon={solidHeart} className="liked" />
+          <FontAwesomeIcon icon={solidHeart} onClick={removeLike} className="liked" />
         </div>
         <div className="like-section-wrapper">
           <FontAwesomeIcon icon={faComment} />

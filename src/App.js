@@ -49,24 +49,14 @@ const App = () => {
     // Get the index in the array of the clicked object
     const indexOfClickedPost = getPosts.map((post) => post.id).indexOf(postId);
 
-    if (getClickedPost[0].isLiked) {
-      console.log("Has been liked");
-      return;
-    }
-
-    // Add a like to the post
-    getClickedPost[0].likes = getClickedPost[0].likes + 1;
-    getClickedPost[0].isLiked = true;
-
-    // Add the edited object to all the posts
-    getPosts[indexOfClickedPost] = getClickedPost[0];
-
     // Change the classes to liked
     gsap.to(`#post-${postId} svg.no-like`, { rotation: 180, scale: 0, display: "none", duration: 0.2 });
     gsap.to(`#post-${postId} svg.liked`, {
       scale: 1.2,
       duration: 0.5,
       delay: 0.3,
+      rotation: 0,
+      display: "block",
     });
     gsap.to(`#post-${postId} svg.liked`, {
       scale: 1,
@@ -91,6 +81,77 @@ const App = () => {
       });
     }
 
+    // Check if the like went through. If it did, don't add anymore likes
+    if (getClickedPost[0].isLiked) {
+      console.log("Has been liked");
+      return;
+    }
+
+    // Add a like to the post
+    getClickedPost[0].likes = getClickedPost[0].likes + 1;
+
+    // Add an isLiked property
+    getClickedPost[0].isLiked = true;
+
+    // Add the edited object to all the posts
+    getPosts[indexOfClickedPost] = getClickedPost[0];
+
+    // Set the new array into the state
+    setPosts(getPosts);
+  };
+
+  const removeLikePost = (postId) => {
+    /*
+      This function serves the purpose of increasing the number of likes by one, of the post with a given id.
+
+      The state of the app lives at the top of the React tree, but it wouldn't be fair for nested components not to be able to change state!
+      This function is passed down to nested components through props, allowing them to increase the number of likes of a given post.
+
+      Invoke `setPosts` and pass as the new state the invocation of `posts.map`.
+      The callback passed into `map` performs the following logic:
+        - if the `id` of the post matches `postId`, return a new post object with the desired values (use the spread operator).
+        - otherwise just return the post object unchanged.
+     */
+
+    // Get all posts into a variable to not mutate original
+    const getPosts = posts.slice();
+
+    // Get the object of the clicked object
+    const getClickedPost = getPosts.filter((post) => post.id === postId);
+
+    // Get the index in the array of the clicked object
+    const indexOfClickedPost = getPosts.map((post) => post.id).indexOf(postId);
+
+    // Add a like to the post
+    getClickedPost[0].likes = getClickedPost[0].likes - 1;
+
+    // Add the edited object to all the posts
+    getPosts[indexOfClickedPost] = getClickedPost[0];
+
+    // Change the classes to liked
+    gsap.to(`#post-${postId} svg.liked`, { rotation: 180, scale: 0, display: "none", duration: 0.2 });
+    gsap.to(`#post-${postId} svg.no-like`, {
+      scale: 1.2,
+      rotation: 0,
+      duration: 0.5,
+      delay: 0.3,
+      display: "block",
+    });
+    gsap.to(`#post-${postId} svg.no-like`, {
+      scale: 1,
+      duration: 0.5,
+      delay: 0.8,
+    });
+
+    // Check if the like went through. If it did, don't add anymore likes
+    if (getClickedPost[0].isLiked === false) {
+      console.log("Has been unliked");
+      return;
+    }
+
+    // Disable the isLiked property
+    getClickedPost[0].isLiked = false;
+
     // Set the new array into the state
     setPosts(getPosts);
   };
@@ -99,7 +160,7 @@ const App = () => {
     <div className="App">
       {/* Add SearchBar and Posts here to render them */}
       <SearchBar />
-      <Posts posts={posts} likePost={likePost} />
+      <Posts posts={posts} likePost={likePost} removeLike={removeLikePost} />
       {/* Check the implementation of each component, to see what props they require, if any! */}
     </div>
   );
