@@ -49,13 +49,17 @@ const App = () => {
     // Get the index in the array of the clicked object
     const indexOfClickedPost = getPosts.map((post) => post.id).indexOf(postId);
 
+    if (getClickedPost[0].isLiked) {
+      console.log("Has been liked");
+      return;
+    }
+
     // Add a like to the post
     getClickedPost[0].likes = getClickedPost[0].likes + 1;
+    getClickedPost[0].isLiked = true;
 
     // Add the edited object to all the posts
     getPosts[indexOfClickedPost] = getClickedPost[0];
-
-    console.log(from);
 
     // Change the classes to liked
     gsap.to(`#post-${postId} svg.no-like`, { rotation: 180, scale: 0, display: "none", duration: 0.2 });
