@@ -9,7 +9,7 @@ import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 
 const Post = (props) => {
   // 🔥 Make sure the parent of Post is passing the right props!
-  const { post, likePost, removeLike } = props;
+  const { post, likePost, removeLike, postComment } = props;
 
   return (
     <div id={`post-${post.id}`} className="post-border">
@@ -22,7 +22,9 @@ const Post = (props) => {
       <LikeSection
         likePost={() => likePost(post.id, "heart")}
         removeLike={() => removeLike(post.id)}
+        postComment={(e, commentMessage) => postComment(post.id, e, commentMessage)}
         numberOfLikes={post.likes}
+        postId={post.id}
       />
       {/* Comments also wants its props! */}
       <Comments comments={post.comments} />
