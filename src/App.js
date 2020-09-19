@@ -27,6 +27,7 @@ const App = () => {
   // This state is the source of truth for the data inside the app. You won't be needing dummyData anymore.
   // To make the search bar work (which is stretch) we'd need another state to hold the search term.
 
+  // Function to add a like to specific post
   const likePost = (postId, from) => {
     /*
       This function serves the purpose of increasing the number of likes by one, of the post with a given id.
@@ -41,15 +42,22 @@ const App = () => {
      */
 
     // Get all posts into a variable to not mutate original
-    const getPosts = posts.slice();
+    const getPosts = [...posts];
 
-    // Get the object of the clicked object
-    const getClickedPost = getPosts.filter((post) => post.id === postId);
+    // Iterate through all posts and then change the value to the specified post
+    const changedPosts = getPosts.map((post) => {
+      if (postId === post.id) {
+        if (post.isLiked !== true) {
+          post.likes += 1;
+        }
 
-    // Get the index in the array of the clicked object
-    const indexOfClickedPost = getPosts.map((post) => post.id).indexOf(postId);
+        post.isLiked = true;
+      }
 
-    // Change the classes to liked
+      return post;
+    });
+
+    // Animate the like icon
     gsap.to(`#post-${postId} svg.no-like`, { rotation: 180, scale: 0, display: "none", duration: 0.2 });
     gsap.to(`#post-${postId} svg.liked`, {
       scale: 1.2,
@@ -81,48 +89,32 @@ const App = () => {
       });
     }
 
-    // Check if the like went through. If it did, don't add anymore likes
-    if (getClickedPost[0].isLiked) {
-      console.log("Has been liked");
-      return;
-    }
-
-    // Add a like to the post
-    getClickedPost[0].likes = getClickedPost[0].likes + 1;
-
-    // Add an isLiked property
-    getClickedPost[0].isLiked = true;
-
-    // Add the edited object to all the posts
-    getPosts[indexOfClickedPost] = getClickedPost[0];
-
     // Set the new array into the state
-    setPosts(getPosts);
+    setPosts(changedPosts);
   };
 
+  // Function to remove like of specific post, if post was already liked
   const removeLikePost = (postId) => {
     // Get all posts into a variable to not mutate original
-    const getPosts = posts.slice();
+    const getPosts = [...posts];
 
-    // Get the object of the clicked object
-    const getClickedPost = getPosts.filter((post) => post.id === postId);
+    // Iterate through all posts and then change the value to the specified post
+    const changedPosts = getPosts.map((post) => {
+      if (postId === post.id) {
+        post.likes -= 1;
+        post.isLiked = false;
+      }
 
-    // Get the index in the array of the clicked object
-    const indexOfClickedPost = getPosts.map((post) => post.id).indexOf(postId);
+      return post;
+    });
 
-    // Add a like to the post
-    getClickedPost[0].likes = getClickedPost[0].likes - 1;
-
-    // Add the edited object to all the posts
-    getPosts[indexOfClickedPost] = getClickedPost[0];
-
-    // Change the classes to liked
+    // Animate the like icon
     gsap.to(`#post-${postId} svg.liked`, { rotation: 180, scale: 0, display: "none", duration: 0.2 });
     gsap.to(`#post-${postId} svg.no-like`, {
       scale: 1.2,
-      rotation: 0,
       duration: 0.5,
       delay: 0.3,
+      rotation: 0,
       display: "block",
     });
     gsap.to(`#post-${postId} svg.no-like`, {
@@ -131,60 +123,42 @@ const App = () => {
       delay: 0.8,
     });
 
-    // Check if the like went through. If it did, don't add anymore likes
-    if (getClickedPost[0].isLiked === false) {
-      console.log("Has been unliked");
-      return;
-    }
-
-    // Disable the isLiked property
-    getClickedPost[0].isLiked = false;
-
     // Set the new array into the state
-    setPosts(getPosts);
+    setPosts(changedPosts);
   };
 
+  // Function to post a comment
   function postComment(postId, e, commentMessage) {
     // Prevent form of reloading page
     e.preventDefault();
 
     // Get all posts into a variable to not mutate original
-    const getPosts = posts.slice();
+    const getPosts = [...posts];
 
-    // Get the object of the clicked object
-    const getClickedPost = getPosts.filter((post) => post.id === postId);
+    // Iterate through all posts and then change the value to the specified post
+    const changedPosts = getPosts.map((post) => {
+      if (postId === post.id) {
+        // New comment to add
+        const newComment = {
+          id: post.comments[post.comments.length - 1].id + 1,
+          text: commentMessage,
+          username: "Richard",
+        };
 
-    // Get the index in the array of the clicked object
-    const indexOfClickedPost = getPosts.map((post) => post.id).indexOf(postId);
+        post.comments.push(newComment);
+      }
 
-    // Add the comment
-    const newComment = {
-      id: getClickedPost[0].comments[getClickedPost[0].comments.length - 1].id + 1,
-      text: commentMessage,
-      username: "Richard",
-    };
-
-    getClickedPost[0].comments = [...getClickedPost[0].comments, newComment];
-
-    // Add the edited object to all the posts
-    getPosts[indexOfClickedPost] = getClickedPost[0];
-
-    console.log(newComment);
-    console.log(getPosts);
-
-    // Set the new array into the state
-    setPosts(getPosts);
-
-    // Get the form container
-    const formContainer = document.querySelector(`#post-${postId} .comment-form`);
-
-    // Remove active class
-    formContainer.classList.remove("active");
+      return post;
+    });
 
     // Slide form back up after submission
     gsap.to(`#post-${postId} .comment-form`, { height: 0, scale: 0, duration: 0.2 });
+
+    // Set the new array into the state
+    setPosts(changedPosts);
   }
 
+  // Function to make a search
   function searchPosts(e, queryStr) {
     // Prevent form of reloading page
     e.preventDefault();
@@ -196,24 +170,27 @@ const App = () => {
     const queryArr = queryStr.split(" ");
 
     // Get all posts into a variable to not mutate original
-    const getPosts = dummyData.slice();
+    const getPosts = [...dummyData];
 
-    // helper
-    let newArr = [];
+    // Declare the array that will hold the queried posts
+    let getQueriedPosts = [];
 
-    // Query the posts that match
-    const getQueriedPosts = queryArr.map((str) => {
-      getPosts.forEach((post) => {
-        if (JSON.stringify(post.comments[0]).toLowerCase().indexOf(str.toLowerCase()) !== -1) {
-          newArr.push(post);
+    // Go through each post to check
+    getPosts.forEach((post) => {
+      // Go through each of the keywords from the search query string
+      queryArr.forEach((str) => {
+        // Get the main comparison variable
+        const comparisonStr = JSON.stringify(post.comments[0]).toLowerCase();
+
+        // If the comparison returns true, add it to the query posts array
+        if (comparisonStr.indexOf(str.toLowerCase()) !== -1) {
+          getQueriedPosts.push(post);
         }
       });
-
-      return newArr;
     });
 
-    // Sort the getQueriedPosts by date
-    const sortedArr = getQueriedPosts[0].slice();
+    // Sort the getQueriedPosts by id
+    const sortedArr = getQueriedPosts.slice();
     sortedArr.sort((a, b) => a.id - b.id);
 
     // Get loading element
@@ -227,7 +204,7 @@ const App = () => {
       setPosts(sortedArr);
       gsap.to(`.loading`, { opacity: 0, display: "none", duration: 0 });
 
-      // If there are no results, display no results
+      // If there are no results, display no results message
       if (sortedArr.length < 1) {
         gsap.to(`.no-results`, { opacity: 1, display: "block", duration: 0.3 });
       }

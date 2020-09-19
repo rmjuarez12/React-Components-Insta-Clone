@@ -12,7 +12,7 @@ import { gsap } from "gsap";
 
 const LikeSection = (props) => {
   // 🔥 Make sure the parent of LikeSection is passing the right props!
-  const { likePost, numberOfLikes, removeLike, postComment, postId } = props;
+  const { post, likePost, numberOfLikes, removeLike, postComment, postId } = props;
 
   // Set the state for the form
   const [commentMessage, setCommentMessage] = useState("");
@@ -35,15 +35,21 @@ const LikeSection = (props) => {
     } else {
       gsap.to(`#post-${postId} .comment-form`, { height: 0, scale: 0, duration: 0.2 });
     }
+  }
 
-    console.log("Open Form");
+  // Choose which heart icon to show
+  let heartIcon;
+  if (post.isLiked) {
+    heartIcon = solidHeart;
+  } else {
+    heartIcon = faHeart;
   }
 
   return (
     <div>
       <div className="like-section" key="likes-icons-container">
         <div className="like-section-wrapper">
-          <FontAwesomeIcon icon={faHeart} onClick={likePost} className="no-like" />
+          <FontAwesomeIcon icon={heartIcon} onClick={likePost} className="no-like" />
           <FontAwesomeIcon icon={solidHeart} onClick={removeLike} className="liked" />
         </div>
         <div className="like-section-wrapper">

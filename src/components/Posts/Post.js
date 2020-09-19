@@ -25,6 +25,7 @@ const Post = (props) => {
         postComment={(e, commentMessage) => postComment(post.id, e, commentMessage)}
         numberOfLikes={post.likes}
         postId={post.id}
+        post={post}
       />
       {/* Comments also wants its props! */}
       <Comments comments={post.comments} />
