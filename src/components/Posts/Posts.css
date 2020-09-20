@@ -3,8 +3,9 @@
   width: 33%;
   min-width: 400px;
   margin: 5px auto;
+  overflow: hidden;
 }
-.post-header{
+.post-header {
   display: flex;
   align-items: center;
 }

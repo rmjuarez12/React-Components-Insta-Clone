@@ -25,3 +25,23 @@
     transform: rotate(360deg);
   }
 }
+
+.post-image-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.post-image-wrapper .post-like {
+  position: absolute;
+  top: 20%;
+  font-size: 200px;
+  color: #eb4d4b;
+  text-shadow: 0 0 50px black;
+  transform: scale(0);
+}
+
+svg.liked {
+  transform: scale(0);
+  color: #eb4d4b;
+}
